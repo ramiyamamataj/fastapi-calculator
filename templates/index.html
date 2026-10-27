@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FastAPI Calculator</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; padding-top: 50px; background: #f0f2f5; }
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 320px; }
+        h1 { font-size: 20px; margin-bottom: 20px; text-align: center; }
+        input, select, button { width: 100%; padding: 10px; margin-bottom: 12px; box-sizing: border-box; }
+        button { background-color: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; }
+        #result { margin-top: 15px; font-weight: bold; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>FastAPI Calculator</h1>
+        <input type="number" id="num_a" placeholder="Operand A" step="any">
+        <select id="operation">
+            <option value="add">Add (+)</option>
+            <option value="subtract">Subtract (-)</option>
+            <option value="multiply">Multiply (*)</option>
+            <option value="divide">Divide (/)</option>
+        </select>
+        <input type="number" id="num_b" placeholder="Operand B" step="any">
+        <button id="calculate-btn" onclick="executeCalculation()">Calculate</button>
+        <div id="result">Result: --</div>
+    </div>
+    <script>
+        async function executeCalculation() {
+            const a = parseFloat(document.getElementById('num_a').value);
+            const b = parseFloat(document.getElementById('num_b').value);
+            const operation = document.getElementById('operation').value;
+            const resDiv = document.getElementById('result');
+            if (isNaN(a) || isNaN(b)) {
+                resDiv.innerText = "Error: Invalid number";
+                return;
+            }
+            try {
+                const response = await fetch('/calculate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ a, b, operation })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    resDiv.innerText = "Result: " + data.result;
+                } else {
+                    resDiv.innerText = "Error: " + data.detail;
+                }
+            } catch (err) {
+                resDiv.innerText = "Error: Network error";
+            }
+        }
+    </script>
+</body>
+</html>
