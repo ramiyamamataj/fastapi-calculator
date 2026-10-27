@@ -42,3 +42,5 @@ async def calculate(calc: CalculationRequest):
     except ValueError as e:
         logger.error(f"Calculation error: {str(e)}")
         raise HTTPException(status_code=400, detail=str(e))
+
+# FastAPI Calculator application entrypoint
